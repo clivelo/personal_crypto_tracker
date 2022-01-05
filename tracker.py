@@ -17,7 +17,7 @@ def read_crypto_file(file_name):
         with open(file_name, "r") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=",", quotechar="|")
             next(csv_reader, None)  # Skip header
-            for i, row in enumerate(csv_reader):
+            for row in csv_reader:
                 crypto_list.append(Crypto(row[0], row[1], atof(row[2])))
     except IOError:
         print("Err#100: CSV file for crypto not found.")
