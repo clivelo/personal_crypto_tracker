@@ -5,7 +5,7 @@ A simple tracker for your cryptocurrency investments. Input your deposits and cr
 App written in `python 3.10.1`, other versions may or may not work.
 - requests
 - bs4
-- forex_python
+- colorama
 
 ## Install and run app
 1. Clone this repository

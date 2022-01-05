@@ -2,6 +2,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from locale import atof, Error as localeError
+from colorama import Back, Style
 
 
 class Crypto:
@@ -32,6 +33,7 @@ class Crypto:
         self.currency = currency
         self.url = f"{self.url_prefix}{self.coin}"
         self.isUp = True
+        self.color = Back.GREEN
         self.fetch_data()
         self.parse_rank()
         self.parse_price()
@@ -93,10 +95,12 @@ class Crypto:
             price_change_24h = self.data.find_all(
                 class_=self.price_change_24h_up_html_class)
             self.isUp = True
+            self.color = Back.GREEN
             if not price_change_24h:
                 price_change_24h = self.data.find_all(
                     class_=self.price_change_24h_down_html_class)
                 self.isUp = False
+                self.color = Back.RED
         except Exception as e:
             print(f"{e}\nErr#231: Could not parse price change last 24-hour.")
         if not price_change_24h:
@@ -124,4 +128,4 @@ class Crypto:
                         currency={self.currency})"
 
     def __str__(self):
-        return f"{self.rank}\t{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t{self.holding:<10}\t {self.holding_fiat:.7f}"
+        return f"{self.color}{self.rank}\t{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t{self.holding:<10}\t {self.holding_fiat:.7f}"
