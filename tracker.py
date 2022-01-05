@@ -2,6 +2,7 @@ import os
 import csv
 import time
 from locale import setlocale, LC_NUMERIC
+from forex_python.converter import CurrencyRates
 from crypto import Crypto
 
 
@@ -16,7 +17,7 @@ def read_crypto_file(file_name):
             csv_reader = csv.reader(csv_file, delimiter=",", quotechar="|")
             next(csv_reader, None)  # Skip header
             for row in csv_reader:
-                crypto_list.append(Crypto(row[0], row[1], row[2]))
+                crypto_list.append(Crypto(row[0], row[1], float(row[2])))
     except IOError:
         print("Err#100: CSV file for crypto not found.")
     except Exception as e:
@@ -37,7 +38,7 @@ def read_deposits_file(file_name):
             next(csv_reader, None)  # Skip header
             for row in csv_reader:
                 deposits_list.append({"Date": row[0],
-                                      "Amount": row[1],
+                                      "Amount": float(row[1]),
                                       "Currency": row[2]})
     except IOError:
         print("Err#110: CSV file for crypto not found.")
@@ -52,17 +53,26 @@ def clear_console(): return os.system(
 
 
 def display_on_console(crypto_list, deposits_list):
-    total_deposits = sum([float(depos["Amount"]) for depos in deposits_list])
-    print(f"Total deposits: ${total_deposits:.2f}\n")
+    total_deposits = sum([depos["Amount"] for depos in deposits_list])
+    print(f"Total deposits: {total_deposits:.2f} USD\n")
 
     print(Crypto.header)
-    print("-" * 65)
+    print("-" * 80)
     for cryp in crypto_list:
         cryp.fetch_data()
         cryp.parse_rank()
         cryp.parse_price()
         cryp.parse_price_change_24h()
+        cryp.update_holding()
         print(cryp)
+
+    total_holdings = sum([cryp.holding_fiat for cryp in crypto_list])
+    print(f"\nTotal holdings\t| {total_holdings:.2f}")
+    print(f"Total deposits\t| {total_deposits:.2f}")
+    print(f"Net (USD)\t| {total_holdings - total_deposits:.2f}")
+    print(
+        f"Net (%)\t\t| {(total_holdings - total_deposits) / total_deposits * 100:.2f}%")
+
     print(
         f"\nLast updated time:\t{time.strftime('%H:%M:%S', time.localtime())}")
 
@@ -70,6 +80,11 @@ def display_on_console(crypto_list, deposits_list):
 def main():
     crypto_list = read_crypto_file("crypto/crypto.csv")
     deposits_list = read_deposits_file("crypto/deposits.csv")
+
+    c = CurrencyRates()
+    for depos in deposits_list:
+        rate = c.get_rate(depos["Currency"], "USD")
+        depos["Amount"] *= rate
 
     start_time = time.time()
     while True:

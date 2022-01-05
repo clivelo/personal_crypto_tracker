@@ -1,3 +1,5 @@
 __pycache__/
 .DS_Store
 app.py
+crypto/crypto.csv
+crypto/deposits.csv

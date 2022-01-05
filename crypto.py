@@ -17,7 +17,7 @@ class Crypto:
           Must comply to ISO 4217 names.
     """
 
-    header = "Coin\tRates (USD)\t24hr Price Change\tHoldings"
+    header = "Coin\tRates (USD)\t24hr Change\tHoldings (Coin)\t Holdings (USD)"
     url_prefix = "https://coinmarketcap.com/currencies/"
     rank_html_class = "namePill namePillPrimary"
     price_html_class = "priceValue"
@@ -36,6 +36,7 @@ class Crypto:
         self.parse_rank()
         self.parse_price()
         self.parse_price_change_24h()
+        self.update_holding()
 
     def fetch_data(self):
         try:
@@ -112,10 +113,13 @@ class Crypto:
         except Exception as e:
             print(f"{e}\nErr#232: This is why I hate regex.")
 
+    def update_holding(self):
+        self.holding_fiat = self.holding * self.price
+
     def __repr__(self):
         return f"Crypto({self.coin}, {self.symbol}, {self.holding},\
                         goal_rate={self.goal_rate},\
                         currency={self.currency})"
 
     def __str__(self):
-        return f"{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t\t{self.holding}"
+        return f"{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t{self.holding:<10}\t {self.holding_fiat:.7f}"
