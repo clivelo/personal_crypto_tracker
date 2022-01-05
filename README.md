@@ -5,3 +5,9 @@ A simple tracker of your cryptocurrency investments. Input your deposits and cry
 - requests
 - bs4
 - forex_python
+
+## Install and run app
+1. Clone this repository
+2. Open terminal/command line
+3. Change directory `cd` to this app
+4. Execute `python3 tracker.py`
