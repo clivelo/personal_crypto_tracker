@@ -1,0 +1,6 @@
+v1.1.0
+- Implemented local currency converter in place of the unreliable forex_python
+- Implemented color coding on terminal for gains and losses
+
+v1.0.0
+- First release of terminal app
