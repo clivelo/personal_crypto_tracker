@@ -99,7 +99,7 @@ def main():
 
 
 if __name__ == "__main__":
-    os.chdir(os.path.dirname(__file__))
+    # os.chdir(os.path.dirname(__file__))
     setlocale(LC_NUMERIC, "en_US.ISO8859-1")
     clear_console()
     main()
