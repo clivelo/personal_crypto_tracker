@@ -2,8 +2,9 @@ import os
 import csv
 import time
 from locale import setlocale, atof, LC_ALL
-from forex_python.converter import CurrencyRates
 from crypto import Crypto
+from currency import CurrencyConverter
+from colorama import init, Back, Style
 
 
 def read_crypto_file(file_name):
@@ -72,9 +73,15 @@ def display_on_console(crypto_list, deposits_list):
         total_holdings = sum([cryp.holding_fiat for cryp in crypto_list])
         print(f"\nTotal holdings\t| {total_holdings:.2f}")
         print(f"Total deposits\t| {total_deposits:.2f}")
-        print(f"Net (USD)\t| {total_holdings - total_deposits:.2f}")
-        print(
-            f"Net (%)\t\t| {(total_holdings - total_deposits) / total_deposits * 100:.2f}%")
+        if total_holdings >= total_deposits:
+            print(f"{Back.GREEN}Net (USD)\t| {total_holdings - total_deposits:.2f}")
+            print(
+                f"{Back.GREEN}Net (%)\t\t| {(total_holdings - total_deposits) / total_deposits * 100:.2f}%")
+        else:
+            print(f"{Back.RED}Net (USD)\t| {total_holdings - total_deposits:.2f}")
+            print(
+                f"{Back.RED}Net (%)\t\t| {(total_holdings - total_deposits) / total_deposits * 100:.2f}%")
+
     except ZeroDivisionError:
         print("Err#120: 0 deposits, division by zero error.")
 
@@ -86,7 +93,8 @@ def main():
     crypto_list = read_crypto_file("crypto/crypto.csv")
     deposits_list = read_deposits_file("crypto/deposits.csv")
 
-    c = CurrencyRates()
+    print("Loading currency rates...")
+    c = CurrencyConverter()
     for depos in deposits_list:
         rate = c.get_rate(depos["Currency"], "USD")
         depos["Amount"] *= rate
@@ -107,5 +115,6 @@ if __name__ == "__main__":
             setlocale(LC_ALL, "en_US.UTF-8")
         except Exception as e:
             print(f"{e}\nErr#000: locale error.")
+    init(autoreset=True)
     clear_console()
     main()
