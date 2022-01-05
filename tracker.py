@@ -1,7 +1,7 @@
 import os
 import csv
 import time
-from locale import setlocale, atof, LC_NUMERIC
+from locale import setlocale, atof, LC_ALL
 from forex_python.converter import CurrencyRates
 from crypto import Crypto
 
@@ -100,6 +100,12 @@ def main():
 
 if __name__ == "__main__":
     # os.chdir(os.path.dirname(__file__))
-    setlocale(LC_NUMERIC, "en_US.ISO8859-1")
+    try:
+        setlocale(LC_ALL, "en_US.utf8")
+    except Exception:
+        try:
+            setlocale(LC_ALL, "en_US.UTF-8")
+        except Exception as e:
+            print(f"{e}\nErr#000: locale error.")
     clear_console()
     main()
