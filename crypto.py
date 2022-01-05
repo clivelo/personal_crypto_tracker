@@ -95,7 +95,8 @@ class Crypto:
         except Exception as e:
             print(f"{e}\nErr#231: Could not parse price change last 24-hour.")
         if not price_change_24h:
-            raise Exception("Err#231: Could not parse price change last 24-hour.")
+            raise Exception(
+                "Err#231: Could not parse price change last 24-hour.")
 
         try:
             # Regex for looking between $ and <
@@ -114,4 +115,4 @@ class Crypto:
                         currency={self.currency})"
 
     def __str__(self):
-        return f"{self.coin}: {self.holding}"
+        return f"{self.coin}: ${self.price} {self.price_change_24h}% {self.holding}"

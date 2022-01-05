@@ -1,6 +1,7 @@
 import os
 import sys
 import csv
+import time
 from locale import setlocale, LC_NUMERIC
 from crypto import Crypto
 
@@ -47,15 +48,28 @@ def read_deposits_file(file_name):
     return deposits_list
 
 
+def clearConsole(): return os.system(
+    'cls' if os.name in ('nt', 'dos') else 'clear')
+
+
 def main():
     crypto_list = read_crypto_file("crypto/crypto.csv")
     deposits_list = read_deposits_file("crypto/deposits.csv")
-    print(crypto_list[0].price_change_24h)
-    print(crypto_list[1].price_change_24h)
-    print(deposits_list)
+
+    start_time = time.time()
+    while True:
+        clearConsole()
+        for cryp in crypto_list:
+            cryp.fetch_data()
+            cryp.parse_rank()
+            cryp.parse_price()
+            cryp.parse_price_change_24h()
+            print(cryp)
+        time.sleep(60 - (time.time() - start_time) % 60)
 
 
 if __name__ == "__main__":
-    os.chdir(os.path.dirname(sys.argv[0]))
+    os.chdir(os.path.dirname(__file__))
     setlocale(LC_NUMERIC, "en_US.ISO8859-1")
+    clearConsole()
     main()
