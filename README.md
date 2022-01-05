@@ -1,5 +1,5 @@
 # Personal Crypto Tracker
-A simple tracker of your cryptocurrency investments. Input your deposits and crypto holdings in the CSV files, this app will display all the prices of the cryptos you own on the terminal and calculate the net value of your investments. It's always a good idea to keep track of your investments using a spreadsheet, this app serves to provide minimal summary of your investments.
+A simple tracker of your cryptocurrency investments. Input your deposits and crypto holdings in the CSV files, this app will display all the prices of the cryptos you own on the terminal and calculate the net value of your investments. It's always a good idea to keep track of your investments using a spreadsheet, this app encourages you as you will need to input your data into a CSV file and also serves to provide concise summary of your investments.
 
 ## Dependencies
 - requests
@@ -13,7 +13,7 @@ A simple tracker of your cryptocurrency investments. Input your deposits and cry
 4. Execute `python3 tracker.py`
 
 ## CSV formatting
-Two CSV files are needed (`crypto.csv` and `deposits.csv`) and must be placed inside the `crypto/` directory. They must following the required format.
+Two CSV files are needed (`crypto.csv` and `deposits.csv`) and must be placed inside the `crypto/` directory. They must follow the required format below.
 
 ### crypto.csv
 - The `Coin` column must must hold strings that allow access to `https://coinmarketcap.com/currencies/<coin>`.
