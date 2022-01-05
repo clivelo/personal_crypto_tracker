@@ -39,6 +39,7 @@ class Crypto:
         self.update_holding()
 
     def fetch_data(self):
+        """Fetch data from url"""
         try:
             self.page = requests.get(self.url)
         except requests.ConnectionError:
@@ -114,6 +115,7 @@ class Crypto:
             print(f"{e}\nErr#232: This is why I hate regex.")
 
     def update_holding(self):
+        """Convert holding in coin to fiat"""
         self.holding_fiat = self.holding * self.price
 
     def __repr__(self):
