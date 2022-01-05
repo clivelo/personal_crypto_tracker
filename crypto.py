@@ -6,24 +6,27 @@ from locale import atof, Error as localeError
 
 class Crypto:
     """
-    Crypto(coin, holding, goal_rate=None, currency="USD")
+    Crypto(coin, symbol, holding, goal_rate=None, currency="USD")
         Arguments:
         - coin (str): Name of cryptocurrency. Must be a working URL to
           https://coinmarketcap.com/currencies/<coin>
+        - symbol (str): Short-form of coin
         - holding (float): Amount of coin holding
         - goal_rate (float) (default: None): Price goal for crypto
         - currency (str) (default: USD): Currency that goal_rate operates with.
           Must comply to ISO 4217 names.
     """
 
+    header = "Coin\tRates (USD)\t24hr Price Change\tHoldings"
     url_prefix = "https://coinmarketcap.com/currencies/"
     rank_html_class = "namePill namePillPrimary"
     price_html_class = "priceValue"
     price_change_24h_up_html_class = "sc-15yy2pl-0 gEePkg"
     price_change_24h_down_html_class = "sc-15yy2pl-0 feeyND"
 
-    def __init__(self, coin, holding, goal_rate=None, currency="USD"):
+    def __init__(self, coin, symbol, holding, goal_rate=None, currency="USD"):
         self.coin = coin
+        self.symbol = symbol
         self.holding = holding
         self.goal_rate = goal_rate
         self.currency = currency
@@ -110,9 +113,9 @@ class Crypto:
             print(f"{e}\nErr#232: This is why I hate regex.")
 
     def __repr__(self):
-        return f"Crypto({self.coin}, {self.holding},\
+        return f"Crypto({self.coin}, {self.symbol}, {self.holding},\
                         goal_rate={self.goal_rate},\
                         currency={self.currency})"
 
     def __str__(self):
-        return f"{self.coin}: ${self.price} {self.price_change_24h}% {self.holding}"
+        return f"{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t\t{self.holding}"
