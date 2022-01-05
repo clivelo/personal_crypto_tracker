@@ -17,7 +17,7 @@ class Crypto:
           Must comply to ISO 4217 names.
     """
 
-    header = "Coin\tRates (USD)\t24hr Change\tHoldings (Coin)\t Holdings (USD)"
+    header = "Rank\tCoin\tRates (USD)\t24hr Change\tHoldings (Coin)\t Holdings (USD)"
     url_prefix = "https://coinmarketcap.com/currencies/"
     rank_html_class = "namePill namePillPrimary"
     price_html_class = "priceValue"
@@ -122,4 +122,4 @@ class Crypto:
                         currency={self.currency})"
 
     def __str__(self):
-        return f"{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t{self.holding:<10}\t {self.holding_fiat:.7f}"
+        return f"{self.rank}\t{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t{self.holding:<10}\t {self.holding_fiat:.7f}"

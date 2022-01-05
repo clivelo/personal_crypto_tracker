@@ -1,7 +1,7 @@
 import os
 import csv
 import time
-from locale import setlocale, LC_NUMERIC
+from locale import setlocale, atof, LC_NUMERIC
 from forex_python.converter import CurrencyRates
 from crypto import Crypto
 
@@ -10,14 +10,15 @@ def read_crypto_file(file_name):
     """
     Read crypto.csv and returns a list of crypto objects
     """
+    print("Loading crypto...")
     crypto_list = []
 
     try:
         with open(file_name, "r") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=",", quotechar="|")
             next(csv_reader, None)  # Skip header
-            for row in csv_reader:
-                crypto_list.append(Crypto(row[0], row[1], float(row[2])))
+            for i, row in enumerate(csv_reader):
+                crypto_list.append(Crypto(row[0], row[1], atof(row[2])))
     except IOError:
         print("Err#100: CSV file for crypto not found.")
     except Exception as e:
@@ -30,6 +31,7 @@ def read_deposits_file(file_name):
     """
     Read deposits.csv and returns a list deposits in dict
     """
+    print("Loading deposits...")
     deposits_list = []
 
     try:
@@ -38,7 +40,7 @@ def read_deposits_file(file_name):
             next(csv_reader, None)  # Skip header
             for row in csv_reader:
                 deposits_list.append({"Date": row[0],
-                                      "Amount": float(row[1]),
+                                      "Amount": atof(row[1]),
                                       "Currency": row[2]})
     except IOError:
         print("Err#110: CSV file for crypto not found.")
@@ -57,7 +59,7 @@ def display_on_console(crypto_list, deposits_list):
     print(f"Total deposits: {total_deposits:.2f} USD\n")
 
     print(Crypto.header)
-    print("-" * 80)
+    print("-" * 90)
     for cryp in crypto_list:
         cryp.fetch_data()
         cryp.parse_rank()
@@ -66,12 +68,15 @@ def display_on_console(crypto_list, deposits_list):
         cryp.update_holding()
         print(cryp)
 
-    total_holdings = sum([cryp.holding_fiat for cryp in crypto_list])
-    print(f"\nTotal holdings\t| {total_holdings:.2f}")
-    print(f"Total deposits\t| {total_deposits:.2f}")
-    print(f"Net (USD)\t| {total_holdings - total_deposits:.2f}")
-    print(
-        f"Net (%)\t\t| {(total_holdings - total_deposits) / total_deposits * 100:.2f}%")
+    try:
+        total_holdings = sum([cryp.holding_fiat for cryp in crypto_list])
+        print(f"\nTotal holdings\t| {total_holdings:.2f}")
+        print(f"Total deposits\t| {total_deposits:.2f}")
+        print(f"Net (USD)\t| {total_holdings - total_deposits:.2f}")
+        print(
+            f"Net (%)\t\t| {(total_holdings - total_deposits) / total_deposits * 100:.2f}%")
+    except ZeroDivisionError:
+        print("Err#120: 0 deposits, division by zero error.")
 
     print(
         f"\nLast updated time:\t{time.strftime('%H:%M:%S', time.localtime())}")
