@@ -38,8 +38,8 @@ class CurrencyConverter:
             raise Exception("Err#321: Could not parse current price.")
 
         try:
-            # Regex for looking between > and </bg
-            price = atof(re.search(r"(?<=>)(.*?)(?=</bg)", str(price))
+            # Regex for looking between value"> and </span
+            price = atof(re.search(r"(?<=value\">)(.*?)(?=</span)", str(price))
                          .group(0))
         except localeError:
             print("Err#323: Locale error")

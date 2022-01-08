@@ -1,3 +1,7 @@
+v1.2.0
+- Fixed html scraper for currency rates
+- Refactored code with Wallet class
+
 v1.1.0
 - Implemented local currency converter in place of the unreliable forex_python
 - Implemented color coding on terminal for gains and losses
