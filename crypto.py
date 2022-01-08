@@ -120,7 +120,7 @@ class Crypto:
 
     def update_holding(self):
         """Convert holding in coin to fiat"""
-        self.holding_fiat = self.holding * self.price
+        self.holding_in_fiat = self.holding * self.price
 
     def __repr__(self):
         return f"Crypto({self.coin}, {self.symbol}, {self.holding},\
@@ -128,4 +128,37 @@ class Crypto:
                         currency={self.currency})"
 
     def __str__(self):
-        return f"{self.color}{self.rank}\t{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t{self.holding:<10}\t {self.holding_fiat:.7f}"
+        return f"{self.color}{self.rank}\t{self.symbol}\t{self.price:<10}\t{self.price_change_24h}%\t\t{self.holding:<10}\t {self.holding_in_fiat:.7f}"
+
+
+class Wallet:
+
+    def __init__(self, wallet=[], deposits=[]):
+        self.wallet = wallet
+        self.deposits = deposits
+
+        self.update_total_holdings()
+        self.update_total_deposits()
+
+    def add_coin(self, coin):
+        self.wallet.append(coin)
+        self.update_total_holdings()
+
+    def add_deposit(self, deposit):
+        self.deposits.append(deposit)
+        self.update_total_deposits()
+
+    def update_total_holdings(self):
+        self.total_holdings = sum([cryp.holding_in_fiat for cryp in self.wallet])
+
+    def update_total_deposits(self):
+        self.total_deposits = sum([depos["Amount"] for depos in self.deposits])
+
+    def update_rates(self):
+        for cryp in self.wallet:
+            cryp.fetch_data()
+            cryp.parse_rank()
+            cryp.parse_price()
+            cryp.parse_price_change_24h()
+            cryp.update_holding()
+        self.update_total_holdings()
