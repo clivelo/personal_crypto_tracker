@@ -88,7 +88,7 @@ def main():
     while True:
         clear_console()
         display_on_console()
-        time.sleep(30 - (time.time() - start_time) % 30)
+        time.sleep(180 - (time.time() - start_time) % 180)
 
 
 if __name__ == "__main__":
