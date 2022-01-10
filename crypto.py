@@ -45,15 +45,15 @@ class Crypto:
         try:
             self.page = requests.get(self.url)
         except requests.ConnectionError:
-            print("Err#200: Network problem, connection error.")
+            raise Exception("Err#200: Network problem, connection error.")
         except requests.HTTPError as e:
-            print(f"Err#201: HTTPError {e}.")
+            raise Exception(f"Err#201: HTTPError {e}.")
         except requests.Timeout as e:
-            print(f"Err#202: Connection timeout. {e}")
+            raise Exception(f"Err#202: Connection timeout. {e}")
         except requests.TooManyRedirects:
-            print("Err#203: Too many redirects.")
+            raise Exception("Err#203: Too many redirects.")
         except Exception as e:
-            print(f"{e}\nErr#299: Something went terribly wrong.")
+            raise Exception(f"{e}\nErr#299: Something went terribly wrong.")
         self.data = BeautifulSoup(self.page.content, "html.parser")
 
     def parse_rank(self):
@@ -61,7 +61,7 @@ class Crypto:
         try:
             rank = self.data.find_all(class_=self.rank_html_class)
         except Exception as e:
-            print(f"{e}\nErr#210: Could not parse rank.")
+            raise Exception(f"{e}\nErr#210: Could not parse rank.")
         if not rank:
             raise Exception("Err#210: Could not parse rank.")
 
@@ -69,14 +69,14 @@ class Crypto:
             # Regex for looking between # and <
             self.rank = int(re.search(r"(?<=#)(.*?)(?=<)", str(rank)).group(0))
         except Exception:
-            print("Err#211: This is why I hate regex.")
+            raise Exception("Err#211: This is why I hate regex.")
 
     def parse_price(self):
         """Parse current price"""
         try:
             price = self.data.find_all(class_=self.price_html_class)
         except Exception as e:
-            print(f"{e}\nErr#221: Could not parse current price.")
+            raise Exception(f"{e}\nErr#221: Could not parse current price.")
         if not price:
             raise Exception("Err#221: Could not parse current price.")
 
@@ -85,9 +85,9 @@ class Crypto:
             self.price = atof(re.search(r"(?<=\$)(.*?)(?=<)", str(price))
                               .group(0))
         except localeError:
-            print("Err#223: Locale error")
+            raise Exception("Err#223: Locale error")
         except Exception as e:
-            print(f"{e}\nErr#222: This is why I hate regex.")
+            raise Exception(f"{e}\nErr#222: This is why I hate regex.")
 
     def parse_price_change_24h(self):
         """Parse price change last 24-hour"""
@@ -102,10 +102,9 @@ class Crypto:
                 self.isUp = False
                 self.color = Back.RED
         except Exception as e:
-            print(f"{e}\nErr#231: Could not parse price change last 24-hour.")
+            raise Exception(f"{e}\nErr#231: Could not parse price change last 24-hour.")
         if not price_change_24h:
-            raise Exception(
-                "Err#231: Could not parse price change last 24-hour.")
+            raise Exception("Err#231: Could not parse price change last 24-hour.")
 
         try:
             # Regex for looking between $ and <
@@ -114,9 +113,9 @@ class Crypto:
             if not self.isUp:
                 self.price_change_24h *= -1
         except localeError:
-            print("Err#233: Locale error")
+            raise Exception("Err#233: Locale error")
         except Exception as e:
-            print(f"{e}\nErr#232: This is why I hate regex.")
+            raise Exception(f"{e}\nErr#232: This is why I hate regex.")
 
     def update_holding(self):
         """Convert holding in coin to fiat"""

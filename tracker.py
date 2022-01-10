@@ -1,10 +1,11 @@
 import os
 import csv
 import time
+import json
 from locale import setlocale, atof, LC_ALL
 from crypto import Crypto, Wallet
-from currency import CurrencyConverter
 from colorama import init, Back, Style
+from google_currency import convert
 
 
 def read_crypto_file(file_name):
@@ -20,9 +21,9 @@ def read_crypto_file(file_name):
             for row in csv_reader:
                 w.add_coin(Crypto(row[0], row[1], atof(row[2])))
     except IOError:
-        print("Err#100: CSV file for crypto not found.")
+        raise Exception("Err#100: CSV file for crypto not found.")
     except Exception as e:
-        print(f"{e}\nErr#109: Something went terribly wrong.")
+        raise Exception(f"{e}\nErr#109: Something went terribly wrong.")
 
 
 def read_deposits_file(file_name):
@@ -40,9 +41,9 @@ def read_deposits_file(file_name):
                                "Amount": atof(row[1]),
                                "Currency": row[2]})
     except IOError:
-        print("Err#110: CSV file for crypto not found.")
+        raise Exception("Err#110: CSV file for crypto not found.")
     except Exception as e:
-        print(f"{e}\nErr#119: Something went terribly wrong.")
+        raise Exception(f"{e}\nErr#119: Something went terribly wrong.")
 
 
 def clear_console(): return os.system(
@@ -66,7 +67,7 @@ def display_on_console():
         print(
             f"{highlight_color}Net (%)\t\t| {(w.total_holdings - w.total_deposits) / w.total_deposits * 100:.2f}%")
     except ZeroDivisionError:
-        print("Err#120: 0 deposits, division by zero error.")
+        raise Exception("Err#120: 0 deposits, division by zero error.")
 
     print(
         f"\nLast updated time:\t{time.strftime('%H:%M:%S', time.localtime())}")
@@ -77,15 +78,20 @@ def main():
     read_deposits_file("crypto/deposits.csv")
 
     print("Loading currency rates...")
-    c = CurrencyConverter()
-    try:
-        for depos in w.deposits:
-            rate = c.get_rate(depos["Currency"], "USD")
-            depos["Amount"] *= rate
-            depos["Currency"] = "USD"
-    except Exception as e:
-        print(f"\n{e}\nThis error happens because the html of the currency website keeps changing. I am working on a fix to make this more consistent. In the meantime, you can change the regex in the parse_price function in currency.py.\n\n{rate}\n")
-        raise
+    currency_pairs = {}
+    for depos in w.deposits:
+        currency_pair = depos["Currency"] + "USD"
+        if currency_pair not in currency_pairs.keys():
+            for i in range(5):
+                currency_converter = json.loads(convert(depos["Currency"], "USD", 1))
+                if currency_converter["converted"]:
+                    break
+                elif i == 4:
+                    raise Exception(
+                        f"Err#301: two possible errors here\n1. Bad currency code: {depos}\n2. API for converting currency failed 5 times in a row.")
+            currency_pairs[currency_pair] = atof(currency_converter["amount"])
+        depos["Amount"] *= currency_pairs[currency_pair]
+        depos["Currency"] = "USD"
     w.update_total_deposits()
 
     start_time = time.time()
@@ -103,7 +109,7 @@ if __name__ == "__main__":
         try:
             setlocale(LC_ALL, "en_US.UTF-8")
         except Exception as e:
-            print(f"{e}\nErr#000: locale error.")
+            raise Exception(f"{e}\nErr#000: locale error.")
     init(autoreset=True)
     clear_console()
 
