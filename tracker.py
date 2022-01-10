@@ -78,10 +78,14 @@ def main():
 
     print("Loading currency rates...")
     c = CurrencyConverter()
-    for depos in w.deposits:
-        rate = c.get_rate(depos["Currency"], "USD")
-        depos["Amount"] *= rate
-        depos["Currency"] = "USD"
+    try:
+        for depos in w.deposits:
+            rate = c.get_rate(depos["Currency"], "USD")
+            depos["Amount"] *= rate
+            depos["Currency"] = "USD"
+    except Exception as e:
+        print(f"\n{e}\nThis error happens because the html of the currency website keeps changing. I am working on a fix to make this more consistent. In the meantime, you can change the regex in the parse_price function in currency.py.\n\n{rate}\n")
+        raise
     w.update_total_deposits()
 
     start_time = time.time()

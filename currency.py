@@ -39,7 +39,7 @@ class CurrencyConverter:
 
         try:
             # Regex for looking between value"> and </span
-            price = atof(re.search(r"(?<=value\">)(.*?)(?=</span)", str(price))
+            price = atof(re.search(r"(?<=>)(.*?)(?=</bg-quote)", str(price))
                          .group(0))
         except localeError:
             print("Err#323: Locale error")
