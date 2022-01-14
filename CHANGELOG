@@ -1,3 +1,6 @@
+v1.3.0
+- Fixed inconsistent currency exchange by implemented the google_currency library
+
 v1.2.0
 - Fixed html scraper for currency rates
 - Refactored code with Wallet class

@@ -6,6 +6,7 @@ App written in `python 3.10.1`, other versions may or may not work.
 - requests
 - bs4
 - colorama
+- google-currency
 
 ## Install and run app
 1. Clone this repository
