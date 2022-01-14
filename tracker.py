@@ -68,6 +68,8 @@ def display_on_console():
             f"{highlight_color}Net (%)\t\t| {(w.total_holdings - w.total_deposits) / w.total_deposits * 100:.2f}%")
     except ZeroDivisionError:
         raise Exception("Err#120: 0 deposits, division by zero error.")
+    except Exception as e:
+        raise Exception(f"{e}\nErr#129: Something went terribly wrong.")
 
     print(
         f"\nLast updated time:\t{time.strftime('%H:%M:%S', time.localtime())}")
