@@ -63,11 +63,11 @@ class Window(QTabWidget):
     def init_loading(self):
         self.dialog = Loading()
 
-        self.w = Wallet()
-        self.read_crypto_file("crypto/crypto.csv")
-        self.read_deposits_file("crypto/deposits.csv")
+        # self.w = Wallet()
+        # self.read_crypto_file("crypto/crypto.csv")
+        # self.read_deposits_file("crypto/deposits.csv")
 
-        self.dialog.allowed_to_close = True
+        # self.dialog.allowed_to_close = True
 
     def tab1UI(self):
         vbox = QVBoxLayout()
