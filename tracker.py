@@ -67,6 +67,10 @@ def display_on_console():
             f"{highlight_color}Net (%)\t\t| {(w.total_holdings - w.total_deposits) / w.total_deposits * 100:.2f}%")
     except ZeroDivisionError:
         print("Err#120: 0 deposits, division by zero error.")
+        raise
+    except Exception as e:
+        print(f"{e}\nErr#129: Something went terribly wrong.")
+        raise
 
     print(
         f"\nLast updated time:\t{time.strftime('%H:%M:%S', time.localtime())}")
@@ -84,7 +88,7 @@ def main():
             depos["Amount"] *= rate
             depos["Currency"] = "USD"
     except Exception as e:
-        print(f"\n{e}\nThis error happens because the html of the currency website keeps changing. I am working on a fix to make this more consistent. In the meantime, you can change the regex in the parse_price function in currency.py.\n\n{rate}\n")
+        print(f"{e}\nErr010: Error with currency converter.")
         raise
     w.update_total_deposits()
 
