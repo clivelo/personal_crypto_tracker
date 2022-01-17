@@ -3,11 +3,12 @@ import sys
 import csv
 import time
 import json
+import threading
 from locale import setlocale, atof, LC_ALL
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QTabWidget, QWidget, QVBoxLayout,
-                             QTableWidget, QAbstractItemView, QAbstractScrollArea, QDialog, QLabel)
+                             QTableWidget, QAbstractItemView, QAbstractScrollArea, QDialog, QLabel, QDesktopWidget)
 
 from crypto import Crypto, Wallet
 
@@ -18,17 +19,37 @@ class Loading(QDialog):
         super().__init__()
         self.setWindowTitle("Loading...")
         self.setFixedSize(300, 100)
+        self.center()
         self.setWindowModality(Qt.ApplicationModal)
         self.setWindowFlag(Qt.WindowCloseButtonHint, False)
 
         vbox = QVBoxLayout()
-        lbl = QLabel("Initializing wallet...")
-        lbl.setAlignment(Qt.AlignCenter)
-        vbox.addWidget(lbl)
+        self.lbl = QLabel("Initializing wallet.")
+        self.lbl.setAlignment(Qt.AlignCenter)
+        vbox.addWidget(self.lbl)
         self.setLayout(vbox)
         self.show()
 
         self.allowed_to_close = False
+
+        thread = threading.Thread(target=self.loop_text)
+        thread.start()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def loop_text(self):
+        while not self.allowed_to_close:
+            time.sleep(1)
+            if str(self.lbl.text()).count('.') == 1:
+                self.lbl.setText("Initializing wallet..")
+            elif str(self.lbl.text()).count('.') == 2:
+                self.lbl.setText("Initializing wallet...")
+            elif str(self.lbl.text()).count('.') == 3:
+                self.lbl.setText("Initializing wallet.")
 
     def closeEvent(self, evnt):
         if self.allowed_to_close:
@@ -42,7 +63,7 @@ class Window(QTabWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Personal Crypto Tracker")
-        self.setGeometry(20, 20, 600, 400)
+        self.setGeometry(50, 50, 600, 400)
 
         # TODO: progress bar
         self.init_loading()
@@ -63,11 +84,8 @@ class Window(QTabWidget):
     def init_loading(self):
         self.dialog = Loading()
 
-        # self.w = Wallet()
-        # self.read_crypto_file("crypto/crypto.csv")
-        # self.read_deposits_file("crypto/deposits.csv")
-
-        # self.dialog.allowed_to_close = True
+        thread = threading.Thread(target=self.read_wallet_thread)
+        thread.start()
 
     def tab1UI(self):
         vbox = QVBoxLayout()
@@ -89,6 +107,14 @@ class Window(QTabWidget):
         vbox = QVBoxLayout()
 
         self.tab3.setLayout(vbox)
+
+    def read_wallet_thread(self):
+        self.w = Wallet()
+        self.read_crypto_file("crypto/crypto.csv")
+        self.read_deposits_file("crypto/deposits.csv")
+        print("Done")
+        self.dialog.allowed_to_close = True
+        self.dialog.close()
 
     def read_crypto_file(self, file_name):
         """
